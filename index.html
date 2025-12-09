@@ -62,13 +62,18 @@
 
         <div id="result" aria-live="polite"></div>
 
-        <!-- Calculator MOVED HERE -->
+                <!-- Calculator MOVED HERE -->
         <div class="calculator">
             <label class="field-label">Calculator:</label>
-            <input type="number" id="calc-input" placeholder="Enter number..." />
-            <button id="calc-divide" class="primary ripple">Разделить</button>
-            <div id="calc-result" class="calc-result"></div>
+
+            <div class="calc-row">
+                <input type="number" id="calc-input" placeholder="Enter number..." class="calc-input" />
+                <div id="calc-result" class="calc-result">= 0.00000</div>
+            </div>
+
+            <button id="calc-divide" class="primary calc-btn">Divide</button>
         </div>
+    </div>
 
     </div>
 
